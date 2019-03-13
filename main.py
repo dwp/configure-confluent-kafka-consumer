@@ -27,33 +27,28 @@ def get_parameters():
     parser.add_argument('--tasks-max', default='1')
     parser.add_argument('--topics', default='')
     parser.add_argument('--flush-size', default='1')
+    parser.add_argument('--port', default='')
     parser.add_argument('--s3-bucket-name', default='')
 
     _args = parser.parse_args()
 
     # Override arguments with environment variables where set
     if 'CONNECTOR_NAME' in os.environ:
-        _args.aws_profile = os.environ['CONNECTOR_NAME']
-
+        _args.conector_name = os.environ['CONNECTOR_NAME']
     if 'AWS_PROFILE' in os.environ:
         _args.aws_profile = os.environ['AWS_PROFILE']
-
     if 'AWS_REGION' in os.environ:
         _args.aws_region = os.environ['AWS_REGION']
-
     if 'TASKS_MAX' in os.environ:
         _args.tasks_max = os.environ['TASKS_MAX']
-
     if 'TOPICS' in os.environ:
-            _args.tasks_max = os.environ['TOPICS']
-
+        _args.topics = os.environ['TOPICS']
     if 'FLUSH_SIZE' in os.environ:
-        _args.tasks_max = os.environ['FLUSH_SIZE']
-
+        _args.flush_size = os.environ['FLUSH_SIZE']
+    if 'PORT' in os.environ:
+        _args.port = os.environ['PORT']
     if 'S3_BUCKET_NAME' in os.environ:
-        _args.tasks_max = os.environ['S3_BUCKET_NAME']
-
-
+        _args.s3_bucket_name = os.environ['S3_BUCKET_NAME']
     return _args
 
 
@@ -75,13 +70,13 @@ def configure_confluent_kafka_consumer(event, args):
         boto3.set_stream_logger()
         logger.debug(f"Using boto3 {boto3.__version__}")
 
-    logger.debug(event)
+        logger.debug(event)
 
-    message = json.loads(event['Records'][0]['Sns']['Message'])
-    logger.debug(message)
+        message = json.loads(event['Records'][0]['Sns']['Message'])
+        logger.debug(message)
 
-    private_ip = message['detail']['containers'][0]['networkInterfaces'][0]['privateIpv4Address']
-    logger.debug(private_ip)
+        private_ip = message['detail']['containers'][0]['networkInterfaces'][0]['privateIpv4Address']
+        logger.debug(private_ip)
 
     payload = {
         "config": {
@@ -98,32 +93,50 @@ def configure_confluent_kafka_consumer(event, args):
             "partitioner.class": "io.confluent.connect.storage.partitioner.DefaultPartitioner",
         }
     }
-    response = requests.get(f"http://{private_ip}:8083/connectors")
+
+
+# Get a list of existing connectors
+
+    response = requests.get(f"http://{private_ip}:{args.port}/connectors")
     existing_connector = response.content.decode("utf-8")
     logger.debug(existing_connector)
-    print (existing_connector)
 
-    # existing_connector = ['s3-sink', 'other-connector']
+    # PUT payload if connectors do exist this updates existing connector
 
     if existing_connector in existing_connector:
         logger.debug("update connector [PUT]")
 
-        response = requests.put(f"http://{private_ip}:8083/connectors", json=payload)
+        payload = {
+            "config": {
+                "connector.class": "io.confluent.connect.s3.S3SinkConnector",
+                "tasks.max": args.tasks_max,
+                "topics": args.topics,
+                "flush_size": args.flush_size,
+
+            }
+        }
+
+        response = requests.put(f"http://{private_ip}:{args.port}/connectors", json=payload)
         logger.debug(response.content.decode("utf-8"))
 
     else:
+        # POST payload if connectors don't exist
 
         logger.debug("create connector [POST]")
 
-        response = requests.post(f"http://{private_ip}:8083/connectors", json=payload)
+        response = requests.post(f"http://{private_ip}:{args.port}/connectors", json=payload)
         logger.debug(response.content.decode("utf-8"))
 
+        # DELETE all others
+
     for existing_connector in existing_connector:
-        if existing_connector not in args.topics:
+
+        if  existing_connector not in args.topics:
             logger.debug("delete connector [DELETE]")
 
-            response = requests.post(f"http://{private_ip}:8083/connectors", json=payload)
-            logger.debug(response.content.decode("utf-8"))
+        response = requests.delete(f"http://{private_ip}:{args.port}/connectors/{connector.name}")
+        logger.debug(response.content.decode("utf-8"))
+
 
 if __name__ == "__main__":
     try:
@@ -133,4 +146,3 @@ if __name__ == "__main__":
         logger.error("Unexpected error occurred")
         logger.error(e)
         raise e
-
