@@ -1,10 +1,10 @@
-import sys
 import argparse
 import boto3
+import json
 import logging
 import os
-import json
 import requests
+import sys
 
 # Initialise logging
 logger = logging.getLogger(__name__)
@@ -62,7 +62,7 @@ def handler(event, context):
 
 def configure_confluent_kafka_consumer(event, args):
     if 'AWS_PROFILE' in os.environ:
-        boto3.setup_default_session(profile_name=args.aws_profile,
+     boto3.setup_default_session(profile_name=args.aws_profile,
                                     region_name=args.aws_region)
 
     if logger.isEnabledFor(logging.DEBUG):
@@ -103,7 +103,7 @@ def configure_confluent_kafka_consumer(event, args):
 
     # PUT payload if connectors do exist this updates existing connector
 
-    if existing_connector in existing_connectors:
+    if existing_connectors in existing_connectors:
         logger.debug("update connector [PUT]")
 
         payload = {
