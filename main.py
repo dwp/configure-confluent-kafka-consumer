@@ -80,7 +80,7 @@ def configure_confluent_kafka_consumer(event, args):
 
     payload = {
         "config": {
-            "connector.name": "s3-sink",
+            "connector.name": args.connector_name,
             "connector.class": "io.confluent.connect.s3.S3SinkConnector",
             "tasks.max": args.tasks_max,
             "topics": args.topics,
