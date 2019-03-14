@@ -21,20 +21,20 @@ def get_parameters():
         description="Configure Confluent Kafka Consumers using RESTful API")
 
     # Parse command line inputs and set defaults
-    parser.add_argument('--connector.name', default='s3-sink')
+    parser.add_argument('--connector-name', default='s3-sink')
     parser.add_argument('--aws-profile', default='default')
     parser.add_argument('--aws-region', default='eu-west-2')
     parser.add_argument('--tasks-max', default='1')
     parser.add_argument('--topics', default='')
     parser.add_argument('--flush-size', default='1')
-    parser.add_argument('--port', default='')
+    parser.add_argument('--port', default='8083')
     parser.add_argument('--s3-bucket-name', default='')
 
     _args = parser.parse_args()
 
     # Override arguments with environment variables where set
     if 'CONNECTOR_NAME' in os.environ:
-        _args.conector_name = os.environ['CONNECTOR_NAME']
+        _args.connector_name = os.environ['CONNECTOR_NAME']
     if 'AWS_PROFILE' in os.environ:
         _args.aws_profile = os.environ['AWS_PROFILE']
     if 'AWS_REGION' in os.environ:
@@ -116,7 +116,7 @@ def configure_confluent_kafka_consumer(event, args):
             }
         }
 
-        response = requests.put(f"http://{private_ip}:{args.port}/connectors", json=payload)
+        response = requests.put(f"http://{private_ip}:{args.port}/connectors/{args.connector_name}/config", json=payload)
         logger.debug(response.content.decode("utf-8"))
 
     else:
