@@ -63,20 +63,20 @@ def handler(event, context):
 def configure_confluent_kafka_consumer(event, args):
     if 'AWS_PROFILE' in os.environ:
      boto3.setup_default_session(profile_name=args.aws_profile,
-                                    region_name=args.aws_region)
+     region_name=args.aws_region)
 
     if logger.isEnabledFor(logging.DEBUG):
         # Log everything from boto3
         boto3.set_stream_logger()
-        logger.debug(f"Using boto3 {boto3.__version__}")
+    logger.debug(f"Using boto3 {boto3.__version__}")
 
-        logger.debug(event)
+    logger.debug(event)
 
-        message = json.loads(event['Records'][0]['Sns']['Message'])
-        logger.debug(message)
+    message = json.loads(event['Records'][0]['Sns']['Message'])
+    logger.debug(message)
 
-        private_ip = message['detail']['containers'][0]['networkInterfaces'][0]['privateIpv4Address']
-        logger.debug(private_ip)
+    private_ip = message['detail']['containers'][0]['networkInterfaces'][0]['privateIpv4Address']
+    logger.debug(private_ip)
 
     payload = {
         "config": {
@@ -103,7 +103,7 @@ def configure_confluent_kafka_consumer(event, args):
 
     # PUT payload if connectors do exist this updates existing connector
 
-    if existing_connectors in existing_connectors:
+    if args.connector_name in existing_connectors:
         logger.debug("update connector [PUT]")
 
         payload = {
