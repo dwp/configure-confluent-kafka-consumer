@@ -98,12 +98,12 @@ def configure_confluent_kafka_consumer(event, args):
 # Get a list of existing connectors
 
     response = requests.get(f"http://{private_ip}:{args.port}/connectors")
-    existing_connector = response.content.decode("utf-8")
-    logger.debug(existing_connector)
+    existing_connectors = response.content.decode("utf-8")
+    logger.debug(existing_connectors)
 
     # PUT payload if connectors do exist this updates existing connector
 
-    if existing_connector in existing_connector:
+    if existing_connector in existing_connectors:
         logger.debug("update connector [PUT]")
 
         payload = {
@@ -129,10 +129,9 @@ def configure_confluent_kafka_consumer(event, args):
 
         # DELETE all others
 
-    for existing_connector in existing_connector:
+    for existing_connector in existing_connectors:
 
-        if  existing_connector not in args.topics:
-            logger.debug("delete connector [DELETE]")
+        logger.debug("delete connector [DELETE]")
 
         response = requests.delete(f"http://{private_ip}:{args.port}/connectors/{connector.name}")
         logger.debug(response.content.decode("utf-8"))
