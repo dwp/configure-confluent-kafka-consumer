@@ -133,7 +133,7 @@ def configure_confluent_kafka_consumer(event, args):
 
         logger.debug("delete connector [DELETE]")
 
-        response = requests.delete(f"http://{private_ip}:{args.port}/connectors/{connector.name}")
+        response = requests.delete(f"http://{private_ip}:{args.port}/connectors/{existing_connector}")
         logger.debug(response.content.decode("utf-8"))
 
 
