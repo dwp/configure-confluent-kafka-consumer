@@ -62,8 +62,8 @@ def handler(event, context):
 
 def configure_confluent_kafka_consumer(event, args):
     if 'AWS_PROFILE' in os.environ:
-     boto3.setup_default_session(profile_name=args.aws_profile,
-     region_name=args.aws_region)
+        boto3.setup_default_session(profile_name=args.aws_profile,
+                                    region_name=args.aws_region)
 
     if logger.isEnabledFor(logging.DEBUG):
         # Log everything from boto3
@@ -78,24 +78,24 @@ def configure_confluent_kafka_consumer(event, args):
     private_ip = message['detail']['containers'][0]['networkInterfaces'][0]['privateIpv4Address']
     logger.debug(private_ip)
 
+    connector_config = {
+        "connector.class": "io.confluent.connect.s3.S3SinkConnector",
+        "tasks.max": args.tasks_max,
+        "topics": args.topics,
+        "flush.size": args.flush_size,
+        "s3.region": args.aws_region,
+        "s3.bucket.name": args.s3_bucket_name,
+        "storage.class": "io.confluent.connect.s3.storage.S3Storage",
+        "format.class": "io.confluent.connect.s3.format.avro.AvroFormat",
+        "schema.generator.class": "io.confluent.connect.storage.hive.schema.DefaultSchemaGenerator",
+        "partitioner.class": "io.confluent.connect.storage.partitioner.DefaultPartitioner",
+    }
     payload = {
-        "config": {
-            "connector.name": args.connector_name,
-            "connector.class": "io.confluent.connect.s3.S3SinkConnector",
-            "tasks.max": args.tasks_max,
-            "topics": args.topics,
-            "flush.size": args.flush_size,
-            "s3.region": args.aws_region,
-            "s3.bucket.name": args.s3_bucket_name,
-            "storage.class": "io.confluent.connect.s3.storage.S3Storage",
-            "format.class": "io.confluent.connect.s3.format.avro.AvroFormat",
-            "schema.generator.class": "io.confluent.connect.storage.hive.schema.DefaultSchemaGenerator",
-            "partitioner.class": "io.confluent.connect.storage.partitioner.DefaultPartitioner",
-        }
+        "name": args.connector_name,
+        "config": connector_config
     }
 
-
-# Get a list of existing connectors
+    # Get a list of existing connectors
 
     response = requests.get(f"http://{private_ip}:{args.port}/connectors")
     existing_connectors = response.content.decode("utf-8")
@@ -107,16 +107,11 @@ def configure_confluent_kafka_consumer(event, args):
         logger.debug("update connector [PUT]")
 
         payload = {
-            "config": {
-                "connector.class": "io.confluent.connect.s3.S3SinkConnector",
-                "tasks.max": args.tasks_max,
-                "topics": args.topics,
-                "flush_size": args.flush_size,
-
-            }
+            "config": connector_config
         }
 
-        response = requests.put(f"http://{private_ip}:{args.port}/connectors/{args.connector_name}/config", json=payload)
+        response = requests.put(f"http://{private_ip}:{args.port}/connectors/{args.connector_name}/config",
+                                json=payload)
         logger.debug(response.content.decode("utf-8"))
 
     else:
