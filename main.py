@@ -90,10 +90,6 @@ def configure_confluent_kafka_consumer(event, args):
         "schema.generator.class": "io.confluent.connect.storage.hive.schema.DefaultSchemaGenerator",
         "partitioner.class": "io.confluent.connect.storage.partitioner.DefaultPartitioner",
     }
-    payload = {
-        "name": args.connector_name,
-        "config": connector_config
-    }
 
     # Get a list of existing connectors
 
@@ -101,11 +97,11 @@ def configure_confluent_kafka_consumer(event, args):
     existing_connectors = response.content.decode("utf-8")
     logger.debug(existing_connectors)
 
-    # PUT payload if connectors do exist this updates existing connector
+    # Check if required connector already exists
 
     if args.connector_name in existing_connectors:
         logger.debug("update connector [PUT]")
-
+        # PUT payload to update existing connector
         payload = {
             "config": connector_config
         }
@@ -115,21 +111,28 @@ def configure_confluent_kafka_consumer(event, args):
         logger.debug(response.content.decode("utf-8"))
 
     else:
-        # POST payload if connectors don't exist
+
+        payload = {
+            "name": args.connector_name,
+            "config": connector_config
+        }
+
+    # POST payload if connectors don't exist
 
         logger.debug("create connector [POST]")
 
         response = requests.post(f"http://{private_ip}:{args.port}/connectors", json=payload)
         logger.debug(response.content.decode("utf-8"))
 
-        # DELETE all others
+    # DELETE all others
 
     for existing_connector in existing_connectors:
+        if existing_connector is not args.connector_name:
 
-        logger.debug("delete connector [DELETE]")
+            logger.debug("delete connector [DELETE]")
 
-        response = requests.delete(f"http://{private_ip}:{args.port}/connectors/{existing_connector}")
-        logger.debug(response.content.decode("utf-8"))
+            response = requests.delete(f"http://{private_ip}:{args.port}/connectors/{existing_connector}")
+            logger.debug(response.content.decode("utf-8"))
 
 
 if __name__ == "__main__":
