@@ -119,13 +119,14 @@ def configure_confluent_kafka_consumer(event, args):
 
     # Confluent's Kafka consumer containers can take a while to start up the
     # REST API, so sleep until it's ready
-    logger.debug("Waiting for REST API to become available")
+    logger.info("Waiting for REST API to become available")
     time.sleep(args.initial_wait_time)
 
     # Get a list of existing connectors
     api_base_url = f"http://{private_ip}:{args.port}/connectors"
     try:
-        logger.debug(f"Retrieving list of connectors via GET on {api_base_url}")
+        logger.info("Retrieving list of connectors")
+        logger.debug(f"GET request on {api_base_url}")
         response = requests.get(f"{api_base_url}", timeout=1)
     except Exception:
         # If the GET request fails, it's likely the container hasn't finished
@@ -140,26 +141,23 @@ def configure_confluent_kafka_consumer(event, args):
     logger.debug(f"Current connectors: {existing_connectors}")
 
     if args.connector_name in existing_connectors:
-        logger.debug(
-            f"Updating {args.connector_name} connector config via PUT on {api_base_url}/{args.connector_name}/config"
-        )
+        logger.info(f"Updating {args.connector_name} connector config")
+        logger.debug(f"PUT request on {api_base_url}/{args.connector_name}/config")
         response = requests.put(
             f"{api_base_url}/{args.connector_name}/config", json=connector_config
         )
         logger.debug(response.text)
     else:
         payload = {"name": args.connector_name, "config": connector_config}
-        logger.debug(
-            f"Creating {args.connector_name} connector via POST on {api_base_url}"
-        )
+        logger.info(f"Creating {args.connector_name} connector")
+        logger.debug(f"POST request on {api_base_url}")
         response = requests.post(f"{api_base_url}", json=payload)
         logger.debug(response.text)
 
     for existing_connector in existing_connectors:
         if existing_connector != args.connector_name:
-            logger.debug(
-                "Deleting connector {existing_connector} via DELETE on {api_base_url}/{existing_connector}"
-            )
+            logger.info(f"Deleting connector {existing_connector}")
+            logger.debug(f"DELETE request on {api_base_url}/{existing_connector}")
             response = requests.delete(f"{api_base_url}/{existing_connector}")
             logger.debug(response.text)
 
