@@ -36,9 +36,17 @@ def get_parameters():
     parser.add_argument("--flush-size", default="1")
     parser.add_argument("--port", default="8083")
     parser.add_argument("--s3-bucket-name", default="")
-    parser.add_argument("--initial-wait-time", default=1)
-    parser.add_argument("--retry-attempts", default=1)
-    parser.add_argument("--retry-backoff-factor", default=1)
+    parser.add_argument(
+        "--initial-wait-time",
+        default=1,
+        help="How long to wait (in seconds) before making the initial REST API call",
+    )
+    parser.add_argument("--retry-attempts", default=3)
+    parser.add_argument(
+        "--retry-backoff-factor",
+        default=0,
+        help="Backoff rate for retries (see https://urllib3.readthedocs.io/en/latest/reference/urllib3.util.html#module-urllib3.util.retry)",
+    )
 
     _args = parser.parse_args()
 
