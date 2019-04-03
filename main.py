@@ -73,6 +73,10 @@ def get_parameters():
         _args.retry_attempts = os.environ["RETRY_ATTEMPTS"]
     if "RETRY_BACKOFF_FACTOR" in os.environ:
         _args.retry_backoff_factor = os.environ["RETRY_BACKOFF_FACTOR"]
+
+    _args.initial_wait_time = int(_args.initial_wait_time)
+    _args.retry_attempts = int(_args.retry_attempts)
+    _args.retry_backoff_factor = float(_args.retry_backoff_factor)
     return _args
 
 
