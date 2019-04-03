@@ -118,8 +118,8 @@ def configure_confluent_kafka_consumer(event, args):
         "partitioner.class": "io.confluent.connect.storage.partitioner.DefaultPartitioner",
     }
 
-    # Kafka consumer containers can take a while until the REST API is available
-    # so configure requests to retry the initial API call
+    # Confluent's Kafka consumer containers can take a while to start up the
+    # REST API, so configure requests to retry the initial API call
     s = requests.Session()
     retries = Retry(total=args.retry_attempts, backoff_factor=args.retry_backoff_factor)
     s.mount("http://", HTTPAdapter(max_retries=retries))
