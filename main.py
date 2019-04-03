@@ -119,6 +119,7 @@ def configure_confluent_kafka_consumer(event, args):
 
     # Confluent's Kafka consumer containers can take a while to start up the
     # REST API, so sleep until it's ready
+    logger.debug("Waiting for REST API to become available")
     time.sleep(args.initial_wait_time)
 
     # Get a list of existing connectors
