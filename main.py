@@ -148,6 +148,7 @@ def configure_confluent_kafka_consumer(event, args):
         "path.format": args.path_format,
         "locale": args.locale,
         "timezone": args.timezone,
+        "name": args.connector_name,
     }
 
     # Confluent's Kafka consumer containers can take a while to start up the
