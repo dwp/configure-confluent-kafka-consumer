@@ -46,7 +46,7 @@ def get_parameters():
     parser.add_argument("--topics-dir", default="")
     parser.add_argument("--timestamp-extractor", default="Wallclock")
     parser.add_argument("--partition-duration-ms", default="86400000")
-    parser.add_argument("--path-format", default="YYYY'-MM'-'dd")
+    parser.add_argument("--path-format", default="YYYY'-'MM'-'dd")
     parser.add_argument("--locale", default="GB")
     parser.add_argument("--timezone", default="UTC")
     parser.add_argument(
