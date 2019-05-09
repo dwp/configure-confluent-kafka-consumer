@@ -49,6 +49,10 @@ def get_parameters():
     parser.add_argument("--path-format", default="YYYY'-'MM'-'dd")
     parser.add_argument("--locale", default="GB")
     parser.add_argument("--timezone", default="UTC")
+    parser.add_argument("--errors-tolerance", default="all")
+    parser.add_argument("--errors-deadletterqueue-topic-name", default="args.dataworks.ucfs-business-data-event-dlq")
+    parser.add_argument("--errors-deadletterqueue-topic-replication-factor", default="1")
+    parser.add_argument("--errors-deadletterqueue-context-headers-enable", default="true")
     parser.add_argument(
         "--initial-wait-time",
         default=1,
@@ -82,6 +86,14 @@ def get_parameters():
         _args.partitioner_class = os.environ["PARTITIONER_CLASS"]
     if "TOPICS_DIR" in os.environ:
         _args.topics_dir = os.environ["TOPICS_DIR"]
+    if "ERRORS_TOLERANCE" in os.environ:
+        _args.errors_tolerance = os.environ["ERRORS_TOLERANCE"]
+    if "ERRORS_DEADLETTERQUEUE_TOPIC_NAME" in os.environ:
+        _args.errors_deadletterqueue_topic_name = os.environ["ERRORS_DEADLETTERQUEUE_TOPIC_NAME"]
+    if "ERRORS_DEADLETTERQUEUE_REPLICATION_FACTOR" in os.environ:
+        _args.errors_deadletterqueue_replication_factor = os.environ["ERRORS_DEADLETTERQUEUE_REPLICATION_FACTOR"]
+    if "ERRORS_DEADLETTERQUEUE_CONTEXT_HEADERS_ENABLE" in os.environ:
+        _args.errors_deadletterqueue_context_headers_enable = os.environ["ERRORS_DEADLETTERQUEUE_CONTEXT_HEADERS_ENABLE"]
     if "TIMESTAMP_EXTRACOTR" in os.environ:
         _args.timestamp_extractor = os.environ["TIMESTAMP_EXTRACTOR"]
     if "PARTITION_DURATION_MS" in os.environ:
@@ -161,10 +173,10 @@ def configure_confluent_kafka_consumer(event, args):
         "path.format": args.path_format,
         "locale": args.locale,
         "timezone": args.timezone,
-        "errors.tolerance": "all",
-        "errors.deadletterqueue.topic.name":"dataworks.ucfs-business-data-event-dlq",
-        "errors.deadletterqueue.topic.replication.factor": 1,
-        "errors.deadletterqueue.context.headers.enable":true
+        "errors.tolerance": args.all,
+        "errors.deadletterqueue.topic.name": args.dataworks.ucfs-business-data-event-dlq,
+        "errors.deadletterqueue.topic.replication.factor": args.1,
+        "errors.deadletterqueue.context.headers.enable": args.true
     }
 
     # Confluent's Kafka consumer containers can take a while to start up the
