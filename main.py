@@ -174,9 +174,9 @@ def configure_confluent_kafka_consumer(event, args):
         "locale": args.locale,
         "timezone": args.timezone,
         "errors.tolerance": args.all,
-        "errors.deadletterqueue.topic.name": args.dataworks.ucfs-business-data-event-dlq,
-        "errors.deadletterqueue.topic.replication.factor": args.1,
-        "errors.deadletterqueue.context.headers.enable": args.true
+        "errors.deadletterqueue.topic.name": args.errors_deadletterqueue_topic_name,
+        "errors.deadletterqueue.topic.replication.factor": args.errors_deadletterqueue_replication_factor,
+        "errors.deadletterqueue.context.headers.enable": args.errors_deadletterqueue_context_headers_enable
     }
 
     # Confluent's Kafka consumer containers can take a while to start up the
