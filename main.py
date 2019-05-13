@@ -50,7 +50,7 @@ def get_parameters():
     parser.add_argument("--locale", default="GB")
     parser.add_argument("--timezone", default="UTC")
     parser.add_argument("--errors-tolerance", default="all")
-    parser.add_argument("--errors-deadletterqueue-topic-name", default="args.dataworks.ucfs-business-data-event-dlq")
+    parser.add_argument("--errors-deadletterqueue-topic-name", default="")
     parser.add_argument("--errors-deadletterqueue-topic-replication-factor", default="1")
     parser.add_argument("--errors-deadletterqueue-context-headers-enable", default="true")
     parser.add_argument(
@@ -90,10 +90,12 @@ def get_parameters():
         _args.errors_tolerance = os.environ["ERRORS_TOLERANCE"]
     if "ERRORS_DEADLETTERQUEUE_TOPIC_NAME" in os.environ:
         _args.errors_deadletterqueue_topic_name = os.environ["ERRORS_DEADLETTERQUEUE_TOPIC_NAME"]
-    if "ERRORS_DEADLETTERQUEUE_REPLICATION_FACTOR" in os.environ:
+    if "ERRORS_DEADLETTERQUEUE_TOPIC_REPLICATION_FACTOR" in os.environ:
         _args.errors_deadletterqueue_replication_factor = os.environ["ERRORS_DEADLETTERQUEUE_REPLICATION_FACTOR"]
+    _args.errors_deadletterqueue_replication_factor = int(_args.errors_deadletterqueue_replication_factor)
     if "ERRORS_DEADLETTERQUEUE_CONTEXT_HEADERS_ENABLE" in os.environ:
         _args.errors_deadletterqueue_context_headers_enable = os.environ["ERRORS_DEADLETTERQUEUE_CONTEXT_HEADERS_ENABLE"]
+    _args.errors_deadletterqueue_context_headers_enable = bool(_args.errors_deadletterqueue_context_headers_enable)
     if "TIMESTAMP_EXTRACOTR" in os.environ:
         _args.timestamp_extractor = os.environ["TIMESTAMP_EXTRACTOR"]
     if "PARTITION_DURATION_MS" in os.environ:
