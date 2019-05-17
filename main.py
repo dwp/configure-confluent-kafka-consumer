@@ -92,11 +92,8 @@ def get_parameters():
         _args.errors_deadletterqueue_topic_name = os.environ["ERRORS_DEADLETTERQUEUE_TOPIC_NAME"]
     if "ERRORS_DEADLETTERQUEUE_TOPIC_REPLICATION_FACTOR" in os.environ:
        _args.errors_deadletterqueue_topic_replication_factor = os.environ["ERRORS_DEADLETTERQUEUE_TOPIC_REPLICATION_FACTOR"]
-    _args.errors_deadletterqueue_topic_replication_factor =int(_args.errors_deadletterqueue_topic_replication_factor)
-
     if "ERRORS_DEADLETTERQUEUE_CONTEXT_HEADERS_ENABLE" in os.environ:
        _args.errors_deadletterqueue_context_headers_enable = os.environ["ERRORS_DEADLETTERQUEUE_CONTEXT_HEADERS_ENABLE"]
-    _args.errors_deadletterqueue_context_headers_enable = bool(_args.errors_deadletterqueue_context_headers_enable)
     if "TIMESTAMP_EXTRACOTR" in os.environ:
         _args.timestamp_extractor = os.environ["TIMESTAMP_EXTRACTOR"]
     if "PARTITION_DURATION_MS" in os.environ:
@@ -110,6 +107,8 @@ def get_parameters():
     if "INITIAL_WAIT_TIME" in os.environ:
         _args.initial_wait_time = os.environ["INITIAL_WAIT_TIME"]
     _args.initial_wait_time = int(_args.initial_wait_time)
+    _args.errors_deadletterqueue_topic_replication_factor = int(_args.errors_deadletterqueue_topic_replication_factor)
+    _args.errors_deadletterqueue_context_headers_enable = bool(_args.errors_deadletterqueue_context_headers_enable)
     required_args = ["s3_bucket_name", "topics_regex"]
     missing_args = []
     for required_message_key in required_args:
