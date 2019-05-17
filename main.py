@@ -49,7 +49,7 @@ def get_parameters():
     parser.add_argument("--path-format", default="YYYY'-'MM'-'dd")
     parser.add_argument("--locale", default="GB")
     parser.add_argument("--timezone", default="UTC")
-    parser.add_argument("--errors-tolerance", default="all")
+    parser.add_argument("--errors-tolerance", default="")
     parser.add_argument("--errors-deadletterqueue-topic-name", default="")
     parser.add_argument("--errors-deadletterqueue-topic-replication-factor", default="1")
     parser.add_argument("--errors-deadletterqueue-context-headers-enable", default="true")
