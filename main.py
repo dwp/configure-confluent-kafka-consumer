@@ -91,11 +91,9 @@ def get_parameters():
     if "ERRORS_DEADLETTERQUEUE_TOPIC_NAME" in os.environ:
         _args.errors_deadletterqueue_topic_name = os.environ["ERRORS_DEADLETTERQUEUE_TOPIC_NAME"]
     if "ERRORS_DEADLETTERQUEUE_TOPIC_REPLICATION_FACTOR" in os.environ:
-        _args.errors_deadletterqueue_replication_factor = os.environ["ERRORS_DEADLETTERQUEUE_REPLICATION_FACTOR"]
-    _args.errors_deadletterqueue_replication_factor = int(_args.errors_deadletterqueue_replication_factor)
+    _args.errors_deadletterqueue_topic_replication_factor = int(_args.errors_deadletterqueue_topic_replication_factor) = os.environ["ERRORS_DEADLETTERQUEUE_TOPIC_REPLICATION_FACTOR"]
     if "ERRORS_DEADLETTERQUEUE_CONTEXT_HEADERS_ENABLE" in os.environ:
-        _args.errors_deadletterqueue_context_headers_enable = os.environ["ERRORS_DEADLETTERQUEUE_CONTEXT_HEADERS_ENABLE"]
-    _args.errors_deadletterqueue_context_headers_enable = bool(_args.errors_deadletterqueue_context_headers_enable)
+    _args.errors_deadletterqueue_context_headers_enable = bool(_args.errors_deadletterqueue_context_headers_enable) = os.environ["ERRORS_DEADLETTERQUEUE_CONTEXT_HEADERS_ENABLE"]
     if "TIMESTAMP_EXTRACOTR" in os.environ:
         _args.timestamp_extractor = os.environ["TIMESTAMP_EXTRACTOR"]
     if "PARTITION_DURATION_MS" in os.environ:
