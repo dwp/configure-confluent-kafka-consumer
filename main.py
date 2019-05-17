@@ -175,7 +175,7 @@ def configure_confluent_kafka_consumer(event, args):
         "timezone": args.timezone,
         "errors.tolerance": args.all,
         "errors.deadletterqueue.topic.name": args.errors_deadletterqueue_topic_name,
-        "errors.deadletterqueue.topic.replication.factor": args.errors_deadletterqueue_replication_factor,
+        "errors.deadletterqueue.topic.replication.factor": args.errors_deadletterqueue_topic_replication_factor,
         "errors.deadletterqueue.context.headers.enable": args.errors_deadletterqueue_context_headers_enable
     }
 
