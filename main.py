@@ -112,6 +112,7 @@ def get_parameters():
     _args.initial_wait_time = int(_args.initial_wait_time)
     _args.errors_deadletterqueue_topic_replication_factor = int(_args.errors_deadletterqueue_topic_replication_factor)
     _args.errors_deadletterqueue_context_headers_enable = bool(_args.errors_deadletterqueue_context_headers_enable)
+    _args.errors_log_enable = bool(_args.errors_log_enable)
     required_args = ["s3_bucket_name", "topics_regex"]
     missing_args = []
     for required_message_key in required_args:
@@ -177,7 +178,7 @@ def configure_confluent_kafka_consumer(event, args):
         "locale": args.locale,
         "timezone": args.timezone,
         "errors.tolerance": args.errors_tolerance,
-        "errors.log.enable": true,
+        "errors.log.enable": args.errors_log_enable,
         "errors.deadletterqueue.topic.name": args.errors_deadletterqueue_topic_name,
         "errors.deadletterqueue.topic.replication.factor": args.errors_deadletterqueue_topic_replication_factor,
         "errors.deadletterqueue.context.headers.enable": args.errors_deadletterqueue_context_headers_enable
