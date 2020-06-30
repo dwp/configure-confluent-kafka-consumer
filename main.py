@@ -63,7 +63,7 @@ def get_parameters():
     _args = parser.parse_args()
 
     # Override arguments with environment variables where set
-    if "CONNECTOR_NAME" in os.environ:
+    if "CONNECTOR_NAME" in os.environ :
         _args.connector_name = os.environ["CONNECTOR_NAME"]
     if "AWS_PROFILE" in os.environ:
         _args.aws_profile = os.environ["AWS_PROFILE"]
